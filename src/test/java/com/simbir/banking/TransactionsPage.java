@@ -1,7 +1,6 @@
 package com.simbir.banking;
 
 import com.simbir.core.BaseSeleniumPage;
-import com.simbir.readProperties.ConfigProvider;
 import com.simbir.util.DateTimeParse;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -14,10 +13,9 @@ import java.util.List;
 
 public class TransactionsPage extends BaseSeleniumPage {
 
+    private final List<String[]> tableContent;
     @FindBy(xpath = "//table/tbody")
     private WebElement transactionsTable;
-
-    private final List<String[]> tableContent;
 
     public TransactionsPage() throws ParseException {
         PageFactory.initElements(driver, this);

@@ -12,7 +12,7 @@ public class MainPage extends BaseSeleniumPage {
     @FindBy(xpath = "//button[text()='Customer Login']")
     private WebElement customerLoginButton;
 
-    public MainPage() throws IOException {
+    public MainPage() {
         driver.get(ConfigProvider.URL);
         PageFactory.initElements(driver, this);
     }

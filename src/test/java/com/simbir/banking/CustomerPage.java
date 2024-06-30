@@ -1,7 +1,6 @@
 package com.simbir.banking;
 
 import com.simbir.core.BaseSeleniumPage;
-import com.simbir.readProperties.ConfigProvider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.PageFactory;
 
