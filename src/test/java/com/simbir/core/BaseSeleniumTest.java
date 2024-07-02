@@ -23,7 +23,8 @@ public class BaseSeleniumTest {
         driver = new RemoteWebDriver(new URL(ConfigProvider.NODE_URL), capabilities);
         driver.manage().window().maximize();
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+
         BaseSeleniumPage.setDriver(driver);
     }
 

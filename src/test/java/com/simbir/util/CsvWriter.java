@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-public class CsvWrite {
+public class CsvWriter {
     public static void write(List<String[]> data, String filename) {
         File file = new File(filename);
         try {

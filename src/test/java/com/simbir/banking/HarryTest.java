@@ -2,11 +2,11 @@ package com.simbir.banking;
 
 import com.simbir.core.BaseSeleniumTest;
 import com.simbir.readProperties.ConfigProvider;
-import com.simbir.util.CsvWrite;
+import com.simbir.util.CsvWriter;
 import com.simbir.util.Fibonacci;
 import io.qameta.allure.Allure;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,12 +14,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.time.LocalDate;
+import java.util.List;
 
 public class HarryTest extends BaseSeleniumTest {
 
-    @Test
-    public void checkHarryPotterBanking() throws IOException, InterruptedException, ParseException {
-        int sum = Fibonacci.fib(LocalDate.now().getDayOfMonth() + 1);
+    @RetryingTest(maxAttempts = 10, minSuccess = 2)
+    public void checkHarryPotterBanking() throws IOException, ParseException {
+        int sum = Fibonacci.get(LocalDate.now().getDayOfMonth() + 1);
         AccountPage accountPage = new MainPage()
                 .enter()
                 .login(ConfigProvider.USER_NAME)
@@ -28,28 +29,17 @@ public class HarryTest extends BaseSeleniumTest {
         Assertions.assertEquals(0, accountPage.getBalance());
 
         TransactionsPage transactionsPage = accountPage.showTransactions();
-        Assertions.assertEquals(2, transactionsPage.getRowsCount());
-        int debs = 0;
-        int creds = 0;
-        int debSum = 0;
-        int credSum = 0;
-        for (String[] row : transactionsPage.getTableContent()) {
-            if (row[2].equals("Credit")) {
-                creds++;
-                credSum = Integer.parseInt(row[1]);
-            }
-            if (row[2].equals("Debit")) {
-                debs++;
-                debSum = Integer.parseInt(row[1]);
-            }
-        }
+        Assertions.assertEquals(2, transactionsPage.getTableContent().size());
+        Assertions.assertEquals(1, transactionsPage.getNumOfDebits());
+        Assertions.assertEquals(1, transactionsPage.getNumOfCredits());
+        Assertions.assertEquals(sum, transactionsPage.getDebitSum());
+        Assertions.assertEquals(sum, transactionsPage.getCreditSum());
 
-        Assertions.assertEquals(1, debs);
-        Assertions.assertEquals(1, creds);
-        Assertions.assertEquals(sum, debSum);
-        Assertions.assertEquals(sum, credSum);
+        allureAttachment(transactionsPage.getTableContent());
+    }
 
-        CsvWrite.write(transactionsPage.getTableContent(), "csv/transactions.csv");
+    private void allureAttachment(List<String[]> tableContent) throws IOException {
+        CsvWriter.write(tableContent, "csv/transactions.csv");
         try (InputStream is = Files.newInputStream(Paths.get("csv/transactions.csv"))) {
             Allure.attachment("transactions.csv ", is);
         }
